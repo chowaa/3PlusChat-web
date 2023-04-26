@@ -21,10 +21,6 @@ export default class StorageHandler {
     }
   }
 
-
-
-
-
   /**
    * @description: 存储为指定Storage
    * @param {key: 键名, value: 键值, type: 存储类型, expireTime: 失效时间}
@@ -42,8 +38,6 @@ export default class StorageHandler {
       this.setSessionStorage(key, value);
     }
   }
-
-
 
   /**
    * @description: 从指定Storage中获取某项
@@ -112,8 +106,6 @@ export default class StorageHandler {
     }
   }
 
-
-
   /**
    * @description: 获取localStorage存储
    * @param {key: 键名}
@@ -143,8 +135,6 @@ export default class StorageHandler {
     }
   }
 
-
-
   /**
  * @description: 移除localStorage存储
  * @param {key: 键名}
@@ -155,8 +145,6 @@ export default class StorageHandler {
       localStorage.removeItem(key);
     }
   }
-
-
 
   /**
    * @description: 清空localStorage
@@ -191,8 +179,6 @@ export default class StorageHandler {
     }
   }
 
-
-
   /**
    * @description: 获取sessionStorage存储
    * @param {key: 键名}
@@ -217,8 +203,6 @@ export default class StorageHandler {
     }
   }
 
-
-
   /**
    * @description: 移除SessionStorage存储
    * @param {key: 键名}
@@ -229,8 +213,6 @@ export default class StorageHandler {
       sessionStorage.removeItem(key);
     }
   }
-
-
 
   /**
    * @description: 清空sessionStorage
