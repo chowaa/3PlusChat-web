@@ -20,7 +20,7 @@ const createdWsRef = ref(false)
 
 const open = ()=> {
   ws = new WS({url:'ws://localhost:8880/webscoket', pingMsg:'{"type":"0000","data":"heart check"}'})
-  createdWsRef.value = true;
+  createdWsRef.value = !createdWsRef.value;
   ElMessage.success('连上了？狠狠的向我发送信息吧')
 }
 
@@ -39,6 +39,7 @@ const close = ()=> {
   if (createdWsRef.value) {
     ws.close()
     ElMessage.success('拜拜嘞')
+    createdWsRef.value = !createdWsRef.value
   } else {
     ElMessage.error('嗯？没连你都想关！big胆！')
   }
