@@ -11,24 +11,20 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import WS from '@/http/ws';
-
-const ws = new WS
+let ws :WS
 
 const inputVal = ref('123')
 const getVal = ref('')
 
 const open = ()=> {
-  ws.open()
+  ws = new WS({url:'ws://localhost:8880/webscoket', pingMsg:'{"type":"0000","data":"heart check"}'})
 }
 
-// ws.open = () => {
-//   console.log('WebSocket连接已打开');
-// };
-
-getVal.value = ws.getData()
-
 const sendData = ()=> {
-  ws.sendWs('', inputVal.value)
+  ws.send(inputVal.value)
+  ws.onmessage = evt => {
+    console.log(evt.data);
+  }
 }
 const close = ()=> {
   ws.close()
