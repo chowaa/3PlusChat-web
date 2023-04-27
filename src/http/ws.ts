@@ -1,10 +1,10 @@
 class WebSocketHeart {
-  url: string; // websocket服务端接口地址
-  pingTimeout: number; // 每隔 30 秒发送一次心跳，如果收到任何后端消息定时器将会重置
-  pongTimeout: number; // ping 消息发送之后，10 秒内没收到后端消息便会认为连接断开
-  reconnectTimeout: number; // 尝试重连的间隔时间
-  pingMsg: string; // 发送心跳消息
-  ws: WebSocket | null; // websocket 实例
+  private url: string; // websocket服务端接口地址
+  private pingTimeout: number; // 每隔 30 秒发送一次心跳，如果收到任何后端消息定时器将会重置
+  private pongTimeout: number; // ping 消息发送之后，10 秒内没收到后端消息便会认为连接断开
+  private reconnectTimeout: number; // 尝试重连的间隔时间
+  private pingMsg: string; // 发送心跳消息
+  private ws: WebSocket | null; // websocket 实例
 
   // 回调钩子
   onclose: () => void;
@@ -13,10 +13,10 @@ class WebSocketHeart {
   onmessage: (event: MessageEvent) => void;
   onreconnect: () => void;
 
-  pingTimeoutId: ReturnType<typeof setTimeout> | null;
-  pongTimeoutId: ReturnType<typeof setTimeout> | null;
-  lockReconnect: boolean;
-  forbidReconnect: boolean;
+  private pingTimeoutId: ReturnType<typeof setTimeout> | null;
+  private pongTimeoutId: ReturnType<typeof setTimeout> | null;
+  private lockReconnect: boolean;
+  private forbidReconnect: boolean;
 
   constructor({ url, pingTimeout, pongTimeout, reconnectTimeout, pingMsg }: { url: string, pingTimeout?: number, pongTimeout?: number, reconnectTimeout?: number, pingMsg?: string }) {
     this.url = url;
@@ -42,7 +42,7 @@ class WebSocketHeart {
   }
 
   // 创建 WebSocket 实例
-  createWebSocket() {
+  private createWebSocket(): void {
     try {
       this.ws = new WebSocket(this.url);
       this.initEventHandle();
@@ -53,7 +53,7 @@ class WebSocketHeart {
   }
 
   // 初始化事件钩子
-  initEventHandle() {
+  private initEventHandle(): void {
     this.ws!.onclose = () => {
       this.onclose();
       this.reconnect();
@@ -78,7 +78,7 @@ class WebSocketHeart {
   }
 
   // 重连
-  reconnect() {
+  private reconnect(): void {
     if (this.lockReconnect || this.forbidReconnect) return;
     this.lockReconnect = true;
     this.onreconnect();
@@ -90,7 +90,7 @@ class WebSocketHeart {
   }
 
   // 发送消息
-  send(msg: string) {
+  public send(msg: string): void {
     console.log(msg,'msg');
     const data = {
       code:200,
@@ -101,20 +101,20 @@ class WebSocketHeart {
   }
 
   // 心态检测
-  heartCheck() {
+  private heartCheck(): void {
     console.log(this.url, 'ws心跳检测');
     this.heartReset();
     this.heartStart();
   }
 
   // 心态重置
-  heartReset() {
+  private heartReset(): void {
     clearTimeout(this.pingTimeoutId!);
     clearTimeout(this.pongTimeoutId!);
   }
 
   // 发送心跳
-  heartStart() {
+  private heartStart(): void {
     if (this.forbidReconnect) return; //不再重连就不再执行心跳
     this.pingTimeoutId = setTimeout(() => {
       //这里发送一个心跳，后端收到后，返回一个心跳消息，
@@ -129,7 +129,7 @@ class WebSocketHeart {
   }
 
   // 手动关闭
-  close() {
+  public close(): void {
     //如果手动关闭连接，不再重连
     console.log('关闭ws连接');
     this.forbidReconnect = true;
