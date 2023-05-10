@@ -1,3 +1,5 @@
+import { ElMessage } from "element-plus";
+
 class WebSocketHeart {
   private url: string; // websocket服务端接口地址
   private pingTimeout: number; // 每隔 30 秒发送一次心跳，如果收到任何后端消息定时器将会重置
@@ -59,6 +61,7 @@ class WebSocketHeart {
       this.reconnect();
     };
     this.ws!.onerror = () => {
+      ElMessage.error('连接出错了哦')
       console.log('err');
       this.onerror();
       this.reconnect();
@@ -123,7 +126,7 @@ class WebSocketHeart {
       //如果超过一定时间还没重置，说明后端主动断开了
       this.pongTimeoutId = setTimeout(() => {
         //如果 onclose 会执行 reconnect，我们执行 ws.close() 就行了.如果直接执行 reconnect 会触发 onclose 导致重连两次
-        // this.ws.close();
+        this.ws!.close();
       }, this.pongTimeout);
     }, this.pingTimeout);
   }

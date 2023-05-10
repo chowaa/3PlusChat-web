@@ -48,4 +48,23 @@ const close = ()=> {
     ElMessage.error('嗯？没连你都想关！big胆！')
   }
 }
+
+
+type ExtendedObjectType<T, K extends string, V> = T & Record<K, V>;
+
+interface Person {
+  name: string;
+  age: number;
+}
+
+// 添加一个新属性 isStudent，值为 boolean
+type Student = ExtendedObjectType<Person, 'isStudent', boolean>;
+
+const student: Student = {
+  name: 'Alice',
+  age: 20,
+  isStudent: true,
+};
+console.log(student);
+
 </script>
