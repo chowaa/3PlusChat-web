@@ -6,6 +6,7 @@
  * @Title 存储处理程序
  */
 import SystemConfig from "@/config/SystemConfig";
+import { ElMessage } from "element-plus";
 let _ = require("lodash");
 export default class StorageHandler {
   /**
@@ -14,22 +15,26 @@ export default class StorageHandler {
    * @return:
    */
   constructor(expireTime: number = SystemConfig.storate.expireTime) {
-    // 默认失效时间为1小时
+    // 默认失效时间为1天
     // 此处的this指向StorageHandler类的实例对象
     if (_.isNumber(expireTime) && expireTime >= 0) {
       this.expireTime = expireTime;
     }
   }
 
+
+
+
+
   /**
    * @description: 存储为指定Storage
    * @param {key: 键名, value: 键值, type: 存储类型, expireTime: 失效时间}
    * @return:
    */
-  private expireTime: number = 3600000;
+  private expireTime: number = 1000 * 60 * 60 * 24 * 1; // 默认失效时间为1天
 
-  setStorage(key: string, value: any, type: string, expireTime: number): void {
-    if (_.isNumber(expireTime) && expireTime >= 0) {
+  public setStorage(key: string, value: any, type: string, expireTime?: number): void {
+    if (expireTime) {
       this.expireTime = expireTime;
     }
     if (type === 'LOCAL') {
@@ -39,12 +44,14 @@ export default class StorageHandler {
     }
   }
 
+
+
   /**
    * @description: 从指定Storage中获取某项
-   * @param {key: 键名, type: 存储类型}
+   * @param {key: 键名, type: 存储类型 LOCAL SESSION}
    * @return:
    */
-  getStorage(key: string, type?: string): any {
+  public getStorage(key: string, type: string): any {
     if (type === SystemConfig.storate.localStorageKey) {
       return this.getLocalStorage(key);
     } else {
@@ -56,10 +63,10 @@ export default class StorageHandler {
 
   /**
    * @description: 从指定Storage中移除某项
-   * @param {key: 键名, type: 存储类型}
+   * @param {key: 键名, type: 存储类型:LOCAL SESSION}
    * @return:
    */
-  removeStorage(key: string, type?: string): void {
+  public removeStorage(key: string, type: string): void {
     if (type === SystemConfig.storate.localStorageKey) {
       this.removeLocalStorage(key);
     } else {
@@ -72,7 +79,7 @@ export default class StorageHandler {
   /**
    * 清空指定Storage
    */
-  clearStorage(type: string): void {
+  public clearStorage(type: string): void {
     if (type === SystemConfig.storate.localStorageKey) {
       this.clearLocalStorage();
     } else {
@@ -87,7 +94,7 @@ export default class StorageHandler {
    * @param {key: 键名, value: 键值}
    * @return:
    */
-  setLocalStorage(key: string, value: any): void {
+  private setLocalStorage(key: string, value: any): void {
     const curtime: number = new Date().getTime(); // 获取当前时间 ，转换成JSON字符串序列
     const valueDate: string = JSON.stringify({
       val: value,
@@ -106,23 +113,27 @@ export default class StorageHandler {
     }
   }
 
+
+
   /**
    * @description: 获取localStorage存储
    * @param {key: 键名}
    * @return:
    */
-  getLocalStorage(key: string): any {
+  private getLocalStorage(key: string): any {
     if (localStorage.getItem(key)) {
       const curtime: number = new Date().getTime();
       const vals: any = localStorage.getItem(key); // 获取本地存储的值
-      const dataObj: any = JSON.stringify({
-        val:vals,
-        timer:curtime
-      }); // 将字符串转换成JSON对象
+      let dataObj: any = null;
+      try {
+        dataObj = JSON.parse(vals); // 将字符串转换成JSON对象
+      } catch (error) {
+        return null;
+      }
       // 如果(当前时间 - 存储的元素在创建时候设置的时间) > 过期时间
-      const isTimed: boolean = new Date().getTime() - dataObj.timer > this.expireTime;
+      const isTimed: boolean = curtime - dataObj.timer > this.expireTime;
       if (isTimed) {
-        console.log("存储已过期");
+        ElMessage.warning('登录过期，请重新登录')
         localStorage.removeItem(key);
         return null;
       } else {
@@ -135,23 +146,27 @@ export default class StorageHandler {
     }
   }
 
+
+
   /**
  * @description: 移除localStorage存储
  * @param {key: 键名}
  * @return:
  */
-  removeLocalStorage(key: string): void {
+  private removeLocalStorage(key: string): void {
     if (localStorage.getItem(key)) {
       localStorage.removeItem(key);
     }
   }
+
+
 
   /**
    * @description: 清空localStorage
    * @param {key: 键名}
    * @return:
    */
-  clearLocalStorage() {
+  private clearLocalStorage() {
     localStorage.clear();
   }
 
@@ -160,7 +175,7 @@ export default class StorageHandler {
    * @param {key: 键名, value: 键值}
    * @return:
    */
-  setSessionStorage(key: string, value: any): void {
+  private setSessionStorage(key: string, value: any): void {
     const curtime: number = new Date().getTime(); // 获取当前时间 ，转换成JSON字符串序列
     const valueDate: string = JSON.stringify({
       val: value,
@@ -179,19 +194,21 @@ export default class StorageHandler {
     }
   }
 
+
+
   /**
    * @description: 获取sessionStorage存储
    * @param {key: 键名}
    * @return:
    */
-  getSessionStorage(key: string): any {
+  private getSessionStorage(key: string): any {
     if (sessionStorage.getItem(key)) {
       const vals: any = sessionStorage.getItem(key); // 获取本地存储的值
       const dataObj: any = JSON.parse(vals); // 将字符串转换成JSON对象
       // 如果(当前时间 - 存储的元素在创建时候设置的时间) > 过期时间
       const isTimed: boolean = new Date().getTime() - dataObj.timer > this.expireTime;
       if (isTimed) {
-        console.log("存储已过期");
+        ElMessage.warning('登录过期，请重新登录')
         sessionStorage.removeItem(key);
         return null;
       } else {
@@ -203,23 +220,27 @@ export default class StorageHandler {
     }
   }
 
+
+
   /**
    * @description: 移除SessionStorage存储
    * @param {key: 键名}
    * @return:
    */
-  removeSessionStorage(key: string): void {
+  private removeSessionStorage(key: string): void {
     if (sessionStorage.getItem(key)) {
       sessionStorage.removeItem(key);
     }
   }
+
+
 
   /**
    * @description: 清空sessionStorage
    * @param {key: 键名}
    * @return:
    */
-  clearSessionStorage() {
+  private clearSessionStorage() {
     sessionStorage.clear();
   }
 
@@ -228,7 +249,7 @@ export default class StorageHandler {
    * @param {e: any}
    * @return {boolean}
    */
-  isQuotaExceeded(e: any): boolean {
+  private isQuotaExceeded(e: any): boolean {
     let quotaExceeded = false;
     if (e) {
       if (e.code) {

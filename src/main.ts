@@ -1,18 +1,17 @@
 import { createApp } from 'vue'
+import './style.css'
 import App from './App.vue'
-import './registerServiceWorker'
-import router from './router'
-import ElementPlusPlugin from '@/plugins/element-plus'
-import 'element-plus/dist/index.css'
+import 'element-plus/dist/index.css';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import Router from './router/index.js'
 import axios from 'axios'
-import store from './store'
+// import 'virtual:svg-icons-register'
 
 const app = createApp(App)
-
-import * as ElementPlusIcons from '@element-plus/icons-vue'
-for(const [key, component] of Object.entries(ElementPlusIcons)) {
-  app.component(key, component)
-}
-
 app.config.globalProperties.$http = axios;
-app.use(store).use(router).use(ElementPlusPlugin).mount('#app')
+app.use(Router).mount('#app');
+
+//全局注册Element Icon
+Object.keys(ElementPlusIconsVue).forEach((key) => {
+  app.component(key,ElementPlusIconsVue[key as keyof typeof ElementPlusIconsVue])
+});

@@ -5,9 +5,9 @@
  */
 
 import axios,  { type AxiosRequestConfig } from "axios"
-import { ElMessage } from "element-plus"
-// import StorageHandler from "../utils/StorageHandler";
-
+// import { ElMessage } from "element-plus"
+import StorageHandler from "../utils/StorageHandler";
+const storageHandler :StorageHandler = new StorageHandler();
 const instance = axios.create({
   timeout: 100000,
   baseURL: 'http://kangfu-api-test.shuoboys.net',
@@ -31,12 +31,12 @@ instance.interceptors.request.use(
     // 在发送前做什么
 
     // 设置token
-    let storageHandler = localStorage.getItem('token')
-    let uid = localStorage.getItem('userId')
+    let token = storageHandler.getStorage('token', 'LOCAL')
+    let uid = storageHandler.getStorage('userId', 'LOCAL')
     // console.log(storageHandler,'storageHandler');
     
     if (storageHandler) {
-      config.headers["token"] = storageHandler;
+      config.headers["token"] = token;
       config.headers["uid"] = uid;
     }
     return config
