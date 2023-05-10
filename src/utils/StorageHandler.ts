@@ -6,7 +6,7 @@
  * @Title 存储处理程序
  */
 import SystemConfig from "@/config/SystemConfig";
-import { ElMessage } from "element-plus";
+// import { ElMessage } from "element-plus";
 let _ = require("lodash");
 export default class StorageHandler {
   /**
@@ -133,7 +133,8 @@ export default class StorageHandler {
       // 如果(当前时间 - 存储的元素在创建时候设置的时间) > 过期时间
       const isTimed: boolean = curtime - dataObj.timer > this.expireTime;
       if (isTimed) {
-        ElMessage.warning('登录过期，请重新登录')
+        console.log("存储已过期");
+        // ElMessage.warning('登录过期，请重新登录')
         localStorage.removeItem(key);
         return null;
       } else {
@@ -208,7 +209,8 @@ export default class StorageHandler {
       // 如果(当前时间 - 存储的元素在创建时候设置的时间) > 过期时间
       const isTimed: boolean = new Date().getTime() - dataObj.timer > this.expireTime;
       if (isTimed) {
-        ElMessage.warning('登录过期，请重新登录')
+        console.log("存储已过期");
+        // ElMessage.warning('登录过期，请重新登录')
         sessionStorage.removeItem(key);
         return null;
       } else {

@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import WS from '@/http/ws';
-import { ElMessage } from 'element-plus';
+// import { ElMessage } from 'element-plus';
 let ws :WS
 
 const inputValRef = ref('123')
@@ -22,9 +22,11 @@ const open = ()=> {
   if (!createdWsRef.value) {
     ws = new WS({url:'ws://localhost:8880/webscoket'})
     createdWsRef.value = !createdWsRef.value;
-    ElMessage.success('连上了!狠狠的向我发送信息吧')
+    console.log('连上了!狠狠的向我发送信息吧');
+    // ElMessage.success('连上了!狠狠的向我发送信息吧')
   } else {
-    ElMessage.warning('连上了还连？')
+    console.log('连上了还连？');
+    // ElMessage.warning('连上了还连？')
   }
 }
 
@@ -36,16 +38,19 @@ const sendData = ()=> {
       console.log(event.data);
     }
   } else {
-    ElMessage.error('先连啊！')
+    console.log('先连啊！');
+    // ElMessage.error('先连啊！')
   }
 }
 const close = ()=> {
   if (createdWsRef.value && ws) {
     ws.close()
-    ElMessage.success('拜拜嘞')
+    console.log('拜拜嘞');
+    // ElMessage.success('拜拜嘞')
     createdWsRef.value = !createdWsRef.value
   } else {
-    ElMessage.error('嗯？没连你都想关！big胆！')
+    console.log('嗯？没连你都想关！big胆！');
+    // ElMessage.error('嗯？没连你都想关！big胆！')
   }
 }
 

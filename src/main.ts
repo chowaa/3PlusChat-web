@@ -5,7 +5,7 @@ import 'element-plus/dist/index.css';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import Router from './router/index.js'
 import axios from 'axios'
-// import 'virtual:svg-icons-register'
+
 
 const app = createApp(App)
 app.config.globalProperties.$http = axios;
